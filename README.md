@@ -4,7 +4,7 @@
 **最低配置**：一台电脑，一个知道python是什么的脑子即可。**硬件方面不需要任何算力。**   
 **灵感来自：[DK数字版](https://greatdk.com/1908.html#comment-5026)** 
 下面是最终成品demo的截图。    
-![Demo](image\demo.png)  
+![Demo](image/demo.png)  
 *（你肯定会做得比我好，因为我的聊天数据集质量不高，我目前才经历了3年“手机不会被妈妈收掉可以自由聊天”的生活。）*
   
 本项目以[ChatGLM2-6b](https://github.com/THUDM/ChatGLM2-6B)为起点。
