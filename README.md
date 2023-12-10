@@ -3,13 +3,11 @@
 ---
 **最低配置**：一台电脑，一个知道python是什么的脑子即可。**硬件方面不需要任何算力。**   
 **灵感来自：[DK数字版](https://greatdk.com/1908.html#comment-5026)** 
-一个最终成品的Demo可以在[这里](https://huggingface.co/spaces/Lindia/ChatWithRua)找到。  
+下面是最终成品demo的截图。    
 ![Demo](image\demo.png)  
 *（你肯定会做得比我好，因为我的聊天数据集质量不高，我目前才经历了3年“手机不会被妈妈收掉可以自由聊天”的生活。）*
   
-本教程分为两部分，第一部分为极速版过程描述，第二部分为笔者个人在制作过程中遇到的一些弯路与问题，以及解决方案。  
-本文以[ChatGLM2-6b](https://github.com/THUDM/ChatGLM2-6B)为起点。
-## 极速版过程
+本项目以[ChatGLM2-6b](https://github.com/THUDM/ChatGLM2-6B)为起点。
 ### 制作数据集
 我们需要大量由你直接产生的数据。收集途径因人而异，如果你想训练Chatbot，可以从微信/QQ聊天记录入手。如果你想训练上下文续写能力，可以从作文/演讲稿/博客入手。下面以收集微信聊天记录为例。
 #### 使用工具
@@ -39,16 +37,60 @@ localId,TalkerId,Type,SubType,IsSender,CreateTime,Status,StrContent,StrTime,_
 一个简单的实现可以在上面的`build_dataset.ipynb`找到。这个文件的功能包括：drop掉所有内容为空的消息；统计总消息数；按照`TalkerId`排序；找到所有你发送的长度大于5个字符的文本消息；找到它们的上一条；统计最终可用的消息数；生成需要的json文件。你可以根据需要自行修改。
 之后我们就得到了两个文件：`train.json`和`dev.json`。这就是我们所需要的训练数据。  
 ### 开始训练
-大模型对显存的要求比较高，`ChatGLM2-6b-int4`是一个降低显存的解决方案。使用Kaggle的两块Tesla T4时，每块占用8G显存。Kaggle免费方案可以充裕地满足我们的训练要求，因此这里以在Kaggle上运行为例。
+大模型对显存的要求比较高，`ChatGLM2-6b-int4`是一个降低显存的解决方案。使用Kaggle的两块Tesla T4时，每块占用8G显存。  
+Kaggle免费方案提供每周30小时的双卡T4，可以充裕地满足我们的训练要求，因此这里以在Kaggle上运行为例。如果你有更好的硬件或者购买在线资源的运算，也可以进行参考。
+本段参考了[这篇博客](https://blog.csdn.net/qq_72632426/article/details/130898002)。
 首先我们下载[ChatGLM2-6b](https://github.com/THUDM/ChatGLM2-6B)。
 ```
 git clone https://github.com/THUDM/ChatGLM-6B.git
 ```
 clone好了之后进入`ChatGLM2-6B/ptuning` 文件夹，新建一个文件夹`WechatMsg`，把刚刚的`train.json`和`dev.json`放在下面。（当然你也可以随便指定路径，只要把这两个文件放进去就行。）  
-然后我们进入Kaggle。前置知识：  
+然后我们要按需要`train.sh`文件。具体如何修改请参考上面的`train.sh` 文件，有详细注释。
+一切就绪，点击[这里](https://www.kaggle.com/)前往kaggle。前置知识：  
 1. 如何创建一个Kaggle账号。
 2. 如何上传自己的数据集。
 3. 如何新建一个Kaggle笔记本、关联自己的数据集并开启GPU加速。
 
 这些都可以非常方便地在网上学习到（比如[这里](https://blog.csdn.net/qq_53919099/article/details/130867160)）。
-我们需要开启GPU T4 * 2。
+一个训练笔记本的例子是上面的`kaggle-train.ipynb`，请阅读注释，根据自己的实际文件名填空。
+我们需要上传整个`ChatGLM2-6B`文件夹到自己的数据集，添加到笔记本，开启GPU T4 * 2。
+如果你看到`!bash train.sh` 的输出进入下面的阶段，就是开始训练了。
+```
+·····
+le set os.environ["WANDB_DISABLED"] = "true"
+wandb: WARNING Path ···· wasn't writable, using system temp directory.
+wandb: WARNING Path ···· wasn't writable, using system temp directory
+wandb: Tracking run with wandb version 0.16.1
+wandb: W&B syncing is set to `offline` in this directory.  
+wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+{'loss': 6.2631, 'learning_rate': 0.0199, 'epoch': 0.0}                         
+{'loss': 5.1531, 'learning_rate': 0.0198, 'epoch': 0.0}                         
+{'loss': 4.902, 'learning_rate': 0.0197, 'epoch': 0.01} 
+····
+```
+训练结束以后（或者进行到一定阶段），可以在右边output一栏层层剥开文件夹找到`checkpoint-{number}`的文件夹。点开保存里面的pytorch_models.bin，我们只需要这一个文件。
+### 自己测试
+还是利用kaggle。新建一个自己的数据集，上传刚刚下载的pytorch_models.bin文件。新建一个笔记本并关联这个数据集。一个测试笔记本的例子是上面的`kaggle-test.ipynb`，请阅读注释，根据自己的实际文件名填空。你可以根据实际情况上传不同参数、不同训练阶段和不同数据集产生的结果，并挑选表现最好的保留。炼丹🐒🐒🐒  
+注意下面这个函数：
+```
+response, history = model.chat(tokenizer, "你好!", history=[])
+```
+可以向其中
+由于我们下一步是制作可以分享的网页版本，因此这里的硬件选择了CPU。同样的，如果你有更好的硬件或者购买在线资源的运算，可以随意指定。
+### 分享给朋友玩
+有很多方法可以写前端，也可以买服务器买域名，但是秉持着0预算的前提，这里以Hugging Face🤗免费方案为例。Hugging Face🤗免费方案提供16G内存CPU，足够进行测试了。
+点击[这里](https://huggingface.co/)前往Hugging Face🤗前置知识：  
+1. 如何创建一个Hugging Face🤗账号。
+2. 如何新建一个Hugging Face Space。（类似于Github Repository）
+   
+这些都可以非常方便地在网上学习到（比如[这里](https://www.kdnuggets.com/2023/06/build-ai-chatbot-5-minutes-hugging-face-gradio.html)）。
+我们新建一个Hugging Face Space，在提示选择SDK时选择Graddio。其中关键的文件有3个，分别是`app.py`,`requirements.txt`和你最后选择的`pytorch_model.bin`。
+请新建`requirements.txt`并填入如下内容：
+```
+torch
+transformers
+sentencepiece
+cpm_kernels
+```
+`app.py`即编写最后呈现出来的页面，因此可以随意编写。demo中使用的`app.py`及详细讲解注释可以在上面找到。    
+你的朋友在浏览器输入`https://huggingface.co/spaces/{your-user-name}/{your-space-name}`就可以跟你的数字分身说话了。
