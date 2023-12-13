@@ -8,16 +8,16 @@
 *（你肯定会做得比我好，因为我的聊天数据集质量不高，我目前才经历了3年“手机不会被妈妈收掉可以自由聊天”的生活。）*  
   
 本项目以[ChatGLM2-6b](https://github.com/THUDM/ChatGLM2-6B)为起点。
-### 制作数据集
+## 制作数据集
 我们需要大量由你直接产生的数据。收集途径因人而异，如果你想训练Chatbot，可以从微信/QQ聊天记录入手。如果你想训练上下文续写能力，可以从作文/演讲稿/博客入手。下面以收集微信聊天记录为例。  
-#### 使用工具
+### 使用工具
 Github上有很多开源的微信聊天记录导出工具。下面以[留痕](https://github.com/LC044/WeChatMsg)为例。      
 >如果有需要，可以在手机端通过`我-设置-通用-聊天记录迁移与备份  (v8.0.44)` 先把手机的聊天记录迁移到电脑上。     
 
 在[这里](https://github.com/LC044/WeChatMsg/releases)下载最新的Release。请注意与微信版本的对应。  
 右键点击刚刚下载的exe文件，以管理员身份运行，按照提示操作。此处具体操作步骤及问题请参阅[“留痕”使用教程](https://blog.lc044.love/post/5)。  
 如果我们成功导出所有的聊天数据，可以在当前目录的`data/聊天记录` 下找到一个`messages.csv` 文件。之后我们只需要用到这个。   
-#### 数据处理
+### 数据处理
 本段内容适配版本：[留痕](https://github.com/LC044/WeChatMsg) == **0.2.6** 微信PC端 == 3.9.8.15，**使用新版本的朋友请务必自行修改`build_dataset.ipynb` ，如果需要帮助可以开issue！**  
 **注意：[留痕](https://github.com/LC044/WeChatMsg) >= 0.2.7 中表头包含发送人昵称、备注，如0.2.7版本中表头为`localId,TalkerId,Type,SubType,IsSender,CreateTime,Status,StrContent,StrTime,Remark,NickName,Sender`, 列数与内容已经对齐。**  
 （要是我晚两天做就好了啊啊啊这样就方便多了也不会因为多个备份的talkerId不一样而乱掉了呜呜呜呜😭）  
@@ -39,7 +39,7 @@ localId,TalkerId,Type,SubType,IsSender,CreateTime,Status,StrContent,StrTime,_
 ```
 一个简单的实现可以在上面的`build_dataset.ipynb`找到。这个文件的功能包括：drop掉所有内容为空的消息；统计总消息数；按照`TalkerId`排序；找到所有你发送的长度大于5个字符的文本消息；找到它们的上一条；统计最终可用的消息数；生成需要的json文件。你可以根据需要自行修改。  
 之后我们就得到了两个文件：`train.json`和`dev.json`。这就是我们所需要的训练数据。    
-### 开始训练
+## 开始训练
 大模型对显存的要求比较高，`ChatGLM2-6b-int4`是一个降低显存的解决方案。使用Kaggle的两块Tesla T4时，每块占用8G显存。    
 Kaggle免费方案提供每周30小时的双卡T4，可以充裕地满足我们的训练要求，因此这里以在Kaggle上运行为例。如果你有更好的硬件或者购买在线资源的运算，也可以进行参考。  
 本段参考了[这篇博客](https://blog.csdn.net/qq_72632426/article/details/130898002)。  
@@ -72,7 +72,7 @@ wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
 ····
 ```
 训练结束以后（或者进行到一定阶段），可以在右边output一栏层层剥开文件夹找到`checkpoint-{number}`的文件夹。点开保存里面的pytorch_models.bin，我们只需要这一个文件。  
-### 自己测试
+## 自己测试
 还是利用kaggle。新建一个自己的数据集，上传刚刚下载的pytorch_models.bin文件。新建一个笔记本并关联这个数据集。一个测试笔记本的例子是上面的`kaggle-test.ipynb`，请阅读注释，根据自己的实际文件名填空。你可以根据实际情况上传不同参数、不同训练阶段和不同数据集产生的结果，并挑选表现最好的保留。炼丹🐒🐒🐒    
 注意下面这个函数：  
 ``` 
@@ -80,7 +80,7 @@ response, history = model.chat(tokenizer, "你好!", history=[])
 ```
 可以向函数中添加`temperature`参数来调整输出的风格，数值越小越precise，越大越creative。  
 由于我们下一步是制作可以分享的网页版本，因此这里的硬件选择了CPU。同样的，如果你有更好的硬件或者购买在线资源的运算，可以随意指定。
-### 分享给朋友玩
+## 分享给朋友玩
 有很多方法可以写前端，也可以买服务器买域名，但是秉持着0预算的前提，这里以Hugging Face🤗免费方案为例。Hugging Face🤗免费方案提供16G内存CPU，足够进行测试了。
 点击[这里](https://huggingface.co/)前往Hugging Face🤗前置知识：  
 1. 如何创建一个Hugging Face🤗账号。
