@@ -18,10 +18,10 @@ Github上有很多开源的微信聊天记录导出工具。下面以[留痕](ht
 右键点击刚刚下载的exe文件，以管理员身份运行，按照提示操作。此处具体操作步骤及问题请参阅[“留痕”使用教程](https://blog.lc044.love/post/5)。  
 如果我们成功导出所有的聊天数据，可以在当前目录的`data/聊天记录` 下找到一个`messages.csv` 文件。之后我们只需要用到这个。   
 #### 数据处理
-以下内容适配版本：[留痕](https://github.com/LC044/WeChatMsg) == 0.2.6 微信PC端 == 3.9.8.15，**使用新版本的朋友请务必自行修改`build_dataset.ipynb` ，如果需要帮助可以请开issue！**  
+本段内容适配版本：[留痕](https://github.com/LC044/WeChatMsg) == **0.2.6** 微信PC端 == 3.9.8.15，**使用新版本的朋友请务必自行修改`build_dataset.ipynb` ，如果需要帮助可以开issue！**  
 **注意：[留痕](https://github.com/LC044/WeChatMsg) >= 0.2.7 中表头包含发送人昵称、备注，如0.2.7版本中表头为`localId,TalkerId,Type,SubType,IsSender,CreateTime,Status,StrContent,StrTime,Remark,NickName,Sender`, 列数与内容已经对齐。**  
-（要是我晚两天做就好了啊啊啊这样就方便多了也不会因为多个备份的talkerId不一样而乱掉了，呜呜呜呜呜）  
-~~`messages.csv`的形式如下：  
+（要是我晚两天做就好了啊啊啊这样就方便多了也不会因为多个备份的talkerId不一样而乱掉了呜呜呜呜😭）  
+`messages.csv`的形式如下：
 ```
 localId,TalkerId,Type,SubType,IsSender,CreateTime,Status,StrContent,StrTime
 12245,3,1,0,1,1528935478,,如果有帮助的话,2013-11-04 21:51:18,1234567890987654
@@ -37,7 +37,7 @@ localId,TalkerId,Type,SubType,IsSender,CreateTime,Status,StrContent,StrTime,_
 {"content": "我会成为厉害的人吗", "summary": "肯定会的"}
 {"content": "你喜欢Rua吗", "summary": "好喜欢♥♥"}
 ```
-一个简单的实现可以在上面的`build_dataset.ipynb`找到。这个文件的功能包括：drop掉所有内容为空的消息；统计总消息数；按照`TalkerId`排序；找到所有你发送的长度大于5个字符的文本消息；找到它们的上一条；统计最终可用的消息数；生成需要的json文件。你可以根据需要自行修改。~~  
+一个简单的实现可以在上面的`build_dataset.ipynb`找到。这个文件的功能包括：drop掉所有内容为空的消息；统计总消息数；按照`TalkerId`排序；找到所有你发送的长度大于5个字符的文本消息；找到它们的上一条；统计最终可用的消息数；生成需要的json文件。你可以根据需要自行修改。  
 之后我们就得到了两个文件：`train.json`和`dev.json`。这就是我们所需要的训练数据。    
 ### 开始训练
 大模型对显存的要求比较高，`ChatGLM2-6b-int4`是一个降低显存的解决方案。使用Kaggle的两块Tesla T4时，每块占用8G显存。    
