@@ -45,7 +45,7 @@ Kaggle免费方案提供每周30小时的双卡T4，可以充裕地满足我们�
 本段参考了[这篇博客](https://blog.csdn.net/qq_72632426/article/details/130898002)。  
 首先我们下载[ChatGLM2-6b](https://github.com/THUDM/ChatGLM2-6B)。  
 ```
-git clone https://github.com/THUDM/ChatGLM-6B.git
+git clone https://github.com/THUDM/ChatGLM2-6B.git
 ```
 clone好了之后进入`ChatGLM2-6B/ptuning` 文件夹，新建一个文件夹`WechatMsg`，把刚刚的`train.json`和`dev.json`放在下面。（当然你也可以随便指定路径，只要把这两个文件放进去就行。）  
 然后我们要按需要`train.sh`文件。具体如何修改请参考上面的`train.sh` 文件，有详细注释。  
