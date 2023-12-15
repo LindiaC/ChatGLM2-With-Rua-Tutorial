@@ -18,9 +18,9 @@ Github上有很多开源的微信聊天记录导出工具。下面以[留痕](ht
 右键点击刚刚下载的exe文件，以管理员身份运行，按照提示操作。此处具体操作步骤及问题请参阅[“留痕”使用教程](https://blog.lc044.love/post/5)。  
 如果我们成功导出所有的聊天数据，可以在当前目录的`data/聊天记录` 下找到一个`messages.csv` 文件。之后我们只需要用到这个。   
 ### 数据处理
-本段内容适配版本：[留痕](https://github.com/LC044/WeChatMsg) == **0.2.6** 微信PC端 == 3.9.8.15，**使用新版本的朋友请务必自行修改`build_dataset.ipynb` ，如果需要帮助可以开issue！**  
-**注意：[留痕](https://github.com/LC044/WeChatMsg) >= 0.2.7 中表头包含发送人昵称、备注，如0.2.7版本中表头为`localId,TalkerId,Type,SubType,IsSender,CreateTime,Status,StrContent,StrTime,Remark,NickName,Sender`, 列数与内容已经对齐。**  
-（要是我晚两天做就好了啊啊啊这样就方便多了也不会因为多个备份的TalkerId不一样而乱掉了呜呜呜呜😭）  
+本段内容适配版本：[留痕](https://github.com/LC044/WeChatMsg) == **0.2.6** 微信PC端 == 3.9.8.15，**使用新版本的朋友请务必自行按需修改`build_dataset.ipynb` ，如果需要帮助可以开issue！**  
+**注意：[留痕](https://github.com/LC044/WeChatMsg) = 0.2.7 中表头包含发送人昵称、备注，如0.2.7版本中表头为`localId,TalkerId,Type,SubType,IsSender,CreateTime,Status,StrContent,StrTime,Remark,NickName,Sender`, 列数与内容已经对齐。**  
+建议使用[留痕](https://github.com/LC044/WeChatMsg) >= 0.2.7的版本，可以方便地根据发送人昵称分类，因为在以往版本中，如果存在多个时间段的来自多个微信版本的备份，有可能会出现使用不同的TalkerId的问题，例如在2018-2019年的老版本手机端备份A中所有与Alice的聊天记录TalkerId是56，但在2022年的电脑端备份B中是17，分开处理会削弱上下文连贯性。（要是我晚两天做就好了啊啊这样就方便多了呜呜呜呜😭）  
 `messages.csv`的形式如下：
 ```
 localId,TalkerId,Type,SubType,IsSender,CreateTime,Status,StrContent,StrTime
