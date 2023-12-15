@@ -89,7 +89,7 @@ response, history = model.chat(tokenizer, "你好!", history=[])
 2. 如何新建一个Hugging Face Space。（类似于Github Repository）
    
 这些都可以非常方便地在网上学习到（比如[这里](https://www.kdnuggets.com/2023/06/build-ai-chatbot-5-minutes-hugging-face-gradio.html)）。
-我们新建一个Hugging Face Space，在提示选择SDK时选择Graddio。其中关键的文件有3个，分别是`app.py`,`requirements.txt`和你最后选择的`pytorch_model.bin`。
+我们新建一个Hugging Face Space，在提示选择SDK时选择Gradio。其中关键的文件有3个，分别是`app.py`,`requirements.txt`和你最后选择的`pytorch_model.bin`。
 请新建`requirements.txt`并填入如下内容：
 ```
 torch
