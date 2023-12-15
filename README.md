@@ -20,7 +20,7 @@ Github上有很多开源的微信聊天记录导出工具。下面以[留痕](ht
 ### 数据处理
 本段内容适配版本：[留痕](https://github.com/LC044/WeChatMsg) == **0.2.6** 微信PC端 == 3.9.8.15，**使用新版本的朋友请务必自行修改`build_dataset.ipynb` ，如果需要帮助可以开issue！**  
 **注意：[留痕](https://github.com/LC044/WeChatMsg) >= 0.2.7 中表头包含发送人昵称、备注，如0.2.7版本中表头为`localId,TalkerId,Type,SubType,IsSender,CreateTime,Status,StrContent,StrTime,Remark,NickName,Sender`, 列数与内容已经对齐。**  
-（要是我晚两天做就好了啊啊啊这样就方便多了也不会因为多个备份的talkerId不一样而乱掉了呜呜呜呜😭）  
+（要是我晚两天做就好了啊啊啊这样就方便多了也不会因为多个备份的TalkerId不一样而乱掉了呜呜呜呜😭）  
 `messages.csv`的形式如下：
 ```
 localId,TalkerId,Type,SubType,IsSender,CreateTime,Status,StrContent,StrTime
@@ -48,8 +48,9 @@ Kaggle免费方案提供每周30小时的双卡T4，可以充裕地满足我们�
 git clone https://github.com/THUDM/ChatGLM2-6B.git
 ```
 clone好了之后进入`ChatGLM2-6B/ptuning` 文件夹，新建一个文件夹`WechatMsg`，把刚刚的`train.json`和`dev.json`放在下面。（当然你也可以随便指定路径，只要把这两个文件放进去就行。）  
-然后我们要按需要`train.sh`文件。具体如何修改请参考上面的`train.sh` 文件，有详细注释。  
-一切就绪，点击[这里](https://www.kaggle.com/)前往kaggle。前置知识：  
+然后我们按需要修改`train.sh`文件。具体如何修改请参考上面的`train.sh` 文件，有详细注释。  
+一切就绪，点击[这里](https://www.kaggle.com/)前往kaggle。  
+前置知识：  
 1. 如何创建一个Kaggle账号。
 2. 如何上传自己的数据集。
 3. 如何新建一个Kaggle笔记本、关联自己的数据集并开启GPU加速。
@@ -73,7 +74,7 @@ wandb: Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
 ```
 训练结束以后（或者进行到一定阶段），可以在右边output一栏层层剥开文件夹找到`checkpoint-{number}`的文件夹。点开保存里面的pytorch_models.bin，我们只需要这一个文件。  
 ## 自己测试
-还是利用kaggle。新建一个自己的数据集，上传刚刚下载的pytorch_models.bin文件。新建一个笔记本并关联这个数据集。一个测试笔记本的例子是上面的`kaggle-test.ipynb`，请阅读注释，根据自己的实际文件名填空。你可以根据实际情况上传不同参数、不同训练阶段和不同数据集产生的结果，并挑选表现最好的保留。炼丹🐒🐒🐒    
+还是利用kaggle。新建一个自己的数据集，上传刚刚下载的pytorch_models.bin文件。新建一个笔记本并关联这个数据集。一个测试笔记本的例子是上面的`kaggle-test.ipynb`，请阅读注释，根据自己的实际文件名填空。注意kaggle数据集是支持增量更新的，添加新的文件时可以直接在数据集主页选择`New Version`，与它关联的笔记本也可以在右边侧栏直接同步新的数据集，不需要每次都重新关联。你可以根据实际情况上传不同参数、不同训练阶段和不同数据集产生的结果，并挑选表现最好的保留。炼丹🐒🐒🐒    
 注意下面这个函数：  
 ``` 
 response, history = model.chat(tokenizer, "你好!", history=[])
@@ -82,7 +83,8 @@ response, history = model.chat(tokenizer, "你好!", history=[])
 由于我们下一步是制作可以分享的网页版本，因此这里的硬件选择了CPU。同样的，如果你有更好的硬件或者购买在线资源的运算，可以随意指定。
 ## 分享给朋友玩
 有很多方法可以写前端，也可以买服务器买域名，但是秉持着0预算的前提，这里以Hugging Face🤗免费方案为例。Hugging Face🤗免费方案提供16G内存CPU，足够进行测试了。
-点击[这里](https://huggingface.co/)前往Hugging Face🤗前置知识：  
+点击[这里](https://huggingface.co/)前往Hugging Face🤗。  
+前置知识：  
 1. 如何创建一个Hugging Face🤗账号。
 2. 如何新建一个Hugging Face Space。（类似于Github Repository）
    
@@ -95,5 +97,5 @@ transformers
 sentencepiece
 cpm_kernels
 ```
-`app.py`即编写最后呈现出来的页面，因此可以随意编写。demo中使用的`app.py`及详细讲解注释可以在上面找到。    
+`app.py`即编写最后呈现出来的页面，因此可以随意发挥。demo中使用的`app.py`及详细讲解注释可以在上面找到。    
 你的朋友在浏览器输入`https://huggingface.co/spaces/{your-user-name}/{your-space-name}`就可以跟你的数字分身说话了。
